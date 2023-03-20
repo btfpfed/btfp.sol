@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: MIT AND GPL-3.0
-
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -17,6 +15,11 @@ contract BTFPproxy is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSU
         __ERC20_init("BTFP", "BTFP");
         __Ownable_init();
         __UUPSUpgradeable_init();
+
+        // Set the proxy admin and implementation contract addresses
+    _setProxyAdmin(0xadD7A7A5abf8B2ca77aBeB62203AABc78c7F131B);
+    _upgradeTo(0x449bd0546202986605dA4d4d99D0576d8914b5C2);
+
     }
 
     function _authorizeUpgrade(address newImplementation)
@@ -53,28 +56,28 @@ contract BTFP {
     }
 
     function transfer(address _to, uint256 _value) public returns (bool success) {
-        require(_to != address(0), "Cannot transfer to zero address");
-        uint256 tax = calculateTax(_value, buyTax);
-        uint256 afterTax = _value - tax;
-        balances[msg.sender] -= _value;
-        balances[_to] += afterTax;
-        taxAddress.transfer(tax);
-        emit Transfer(msg.sender, _to, afterTax);
-        return true;
-    }
+    require(_to != address(0), "Cannot transfer to zero address");
+    uint256 tax = calculateTax(_value, buyTax);
+    uint256 afterTax = _value - tax;
+    balances[msg.sender] -= _value;
+    balances[_to] += afterTax;
+    taxAddress.transfer(tax);
+    emit Transfer(msg.sender, _to, afterTax);
+    return true;
+}
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        require(_to != address(0), "Cannot transfer to zero address");
-        require(allowed[_from][msg.sender] >= _value, "Insufficient allowance");
-        uint256 tax = calculateTax(_value, buyTax);
-        uint256 afterTax = _value - tax;
-        balances[_from] -= _value;
-        balances[_to] += afterTax;
-        taxAddress.transfer(tax);
-        allowed[_from][msg.sender] -= _value;
-        emit Transfer(_from, _to, afterTax);
-        return true;
-    }
+function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+    require(_to != address(0), "Cannot transfer to zero address");
+    require(allowed[_from][msg.sender] >= _value, "Insufficient allowance");
+    uint256 tax = calculateTax(_value, buyTax);
+    uint256 afterTax = _value - tax;
+    balances[_from] -= _value;
+    balances[_to] += afterTax;
+    taxAddress.transfer(tax);
+    allowed[_from][msg.sender] -= _value;
+    emit Transfer(_from, _to, afterTax);
+    return true;
+}
 
     function approve(address _spender, uint256 _value) public returns (bool success) {
         allowed[msg.sender][_spender] = _value;
