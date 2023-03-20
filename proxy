@@ -1,4 +1,6 @@
-pragma solidity ^0.8.4;
+ // SPDX-License-Identifier: MIT AND GPL-3.0
+ 
+ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -15,10 +17,6 @@ contract BTFPproxy is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSU
         __ERC20_init("BTFP", "BTFP");
         __Ownable_init();
         __UUPSUpgradeable_init();
-
-        // Set the proxy admin and implementation contract addresses
-    _setProxyAdmin(0xadD7A7A5abf8B2ca77aBeB62203AABc78c7F131B);
-    _upgradeTo(0x449bd0546202986605dA4d4d99D0576d8914b5C2);
 
     }
 
